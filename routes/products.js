@@ -1,4 +1,4 @@
-import express from express;
+import express from 'express';
 
 
 const router = express.Router();
@@ -45,6 +45,48 @@ router.get("/:id", (req, res) =>
         products.push(newProduct);
         res.json(newProduct);
     });
+
+    // update
+    router.put("/:id", (req, res) => {
+        const id = req.params.id;
+        const { name, price } = req.body;
+
+        let found = false;
+
+        for (let i = 0; i < products.length; i++) {
+            if (products[i].id == id) {
+
+                if (name !== undefined) {
+
+                    products[i].name = name;
+                }
+                if (price !== undefined) {
+                    products[i].price = price;
+                }
+                found = true;
+
+                res.json(products[i]);
+                break;
+            }
+        }
+
+        if (!found) {
+            res.status(404).json({ message: "Product not found" });
+        }
+    });
+
+
+    // delete 
+    router.delete("/:id", (req, res) => {
+        const { id } = req.params;
+        const index = products.findIndex(p => p.id == id);
+        if (index !== -1) {
+            const deletedProduct = products.splice(index, 1);
+            res.json(deletedProduct[0]);
+        } else {
+            res.status(404).json({ message: "Product not found" });
+        }
+});
 
     
 export default router;
